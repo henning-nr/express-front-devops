@@ -1,0 +1,172 @@
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Cadastrar Pessoa</h4>
+      <p>Cadastre ou Edite uma Pessoa</p>
+
+			 <div class="row">
+    <form class="col s12">
+      <div style="padding:10px">
+				
+			<div class="row">
+    <form class="col s12">
+      <div class="row">
+				<%for(let prop in pessoas[0]){%>
+        <div class="input-field col s6">
+          <input placeholder="Placeholder" 
+						name="<%=prop%>" 
+						id="<%=prop%>" 
+						type="text" 
+						class="validate">
+          <label class="active" for="<%=prop%>"><%=prop.toUpperCase()%></label>
+        </div>
+			<%}%>
+      </div>
+		</form>
+				</div>
+				
+      </div
+				</form>
+			 </div>
+			
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+			
+      <a onclick="salvarPessoa()" href="#!" class="modal-close waves-effect waves-green btn-flat">Salvar</a>
+    </div>
+  </div>
+
+			
+
+      <div class="row center">
+
+					 <table>
+        <thead>
+          <tr>
+						<%for(let col of cols){%>
+              <th><%=col%></th>
+						<%}%>
+          </tr>
+        </thead>
+
+        <tbody>
+					<%for(let pessoa of pessoas){%>
+						<tr>
+              <%for(let key in pessoa){%>
+                <td><%=pessoa[key]%></td>
+              <%}%>
+                <!-- btn editar -->
+                <td><a onclick="editar(<%=pessoa.id%>)" class="btn-floating btn-small waves-effect waves-light blue modal-trigger" href="#modal1"><i class="material-icons">create</i></a></td>
+                <!-- btn excluir -->
+                <td><a onclick="deletar(<%=pessoa.id%>)" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a></td>
+						</tr>
+					<%}%>
+          <tr>
+          </tr>
+        </tbody>
+      </table>
+			</div>
+
+
+<div class="fixed-action-btn">
+  <a onclick="limparDados()" href="#modal1" class="btn-floating btn-large modal-trigger green">
+    <i class="large material-icons">add</i>
+  </a>
+</div>
+
+	<script>
+		let tipoAcao = 'salvar'
+							$(document).ready(function(){
+								$('.modal').modal();
+							})
+							
+
+										// URL DA REQUISIÇÃO
+      function editar(id) {	
+				tipoAcao = "editar"
+				console.log('tipo da ação no editar', tipoAcao)
+				
+				let url =  '/person/'  // usando o server
+				
+				$.getJSON(url+id, (dados)=>{
+					$('#id').prop('disabled', true);
+					$('#id').val(dados.id)
+					$('#nome').val(dados.nome)
+					$('#signo').val(dados.signo)
+					$('#sangue').val(dados.sangue)
+				})		
+				
+      }
+
+			
+      function deletar(id) {
+        $.ajax({
+  				url: '/person'+id,
+  				method: 'DELETE',
+  				success: function(response) {
+    					console.log('deletei', response);
+						$('#content').html(response)
+					
+  				},
+  				error: function(error) {
+    					console.log(error);
+  				}
+				});	
+      }
+
+		function limparDados(){
+			$('#id').prop('disabled', true);
+			$('#id').val('')
+					$('#nome').val('')
+					$('#signo').val('')
+					$('#sangue').val('')
+						tipoAcao = "salvar"
+		}
+
+							
+			function salvarPessoa() {
+console.log('tipo da ação no salvar', tipoAcao)
+
+				let pessoa = {
+					nome : $('#nome').val(),
+					signo : $('#signo').val(),
+					tipo_sanguineo : $('#sangue').val()
+				}
+				
+				if(tipoAcao == "salvar"){
+					console.log('quero salvar')
+					
+					$.ajax({
+  				url: '/person',
+  				method: 'POST',
+  				data: pessoa,
+  				success: function(response) {
+    					console.log('editei', response);
+						$('#content').html(response)
+					
+  				},
+  				error: function(error) {
+    					console.log(error);
+  				}
+				});	
+					
+				}else{
+					$.ajax({
+  				url: '/person/'+$('#id').val(),
+  				method: 'PATCH',
+  				data: pessoa,
+  				success: function(response) {
+    					console.log('editei', response);
+						$('#content').html(response)
+					
+  				},
+  				error: function(error) {
+    					console.log(error);
+  				}
+				});	
+				}
+	
+			}
+							
+	</script>
