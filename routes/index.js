@@ -3,6 +3,7 @@ var router = express.Router();
 var axios = require('axios')
 var fetch = require('fetch')
 
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   	res.render('index');
