@@ -21,7 +21,6 @@ router.get('/person', function(req, res, next) {
 				signo: pessoa.signo,
 				sangue: pessoa.tipo_sanguineo
 			}
-			console.log(pessoa)
 			return pessoa
 		})
 		// Colunas da tabela
